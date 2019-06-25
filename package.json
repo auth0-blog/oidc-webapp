@@ -1,0 +1,36 @@
+{
+  "name": "regular-web-app",
+  "version": "1.0.0",
+  "description": "OpenID Connect Handbook: Securing Regular Web Apps",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "keywords": [],
+  "author": "Bruno Krebs <krebs.bruno@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
+    "express-handlebars": "^3.1.0",
+    "husky": "^2.5.0",
+    "lint-staged": "^8.2.1",
+    "prettier": "^1.18.2",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --single-quote --write",
+      "git add"
+    ]
+  },
+  "prettier": {
+    "singleQuote": true
+  }
+}
