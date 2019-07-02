@@ -1,3 +1,6 @@
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const crypto = require('crypto');
 const express = require('express');
 const handlebars = require('express-handlebars');
 const path = require('path');
@@ -6,8 +9,12 @@ const request = require('request-promise');
 // loading env vars from .env file
 require('dotenv').config();
 
+const nonceCookieName = 'auth0rization-nonce';
+
 const app = express();
 
+app.use(bodyParser.urlencoded());
+app.use(cookieParser(crypto.randomBytes(16).toString('hex')));
 app.engine('handlebars', handlebars());
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
@@ -18,39 +25,40 @@ app.get('/', (req, res) => {
 
 app.get('/login', (req, res) => {
   const authorizationEndpoint = `${process.env.OIDC_PROVIDER}/authorize`;
-  const responseType = 'code';
+  const responseType = 'id_token';
   const scope = 'openid';
   const clientID = 'cSZ566Xw5yOZYs0bcebqKnXwKnfFHtVS';
   const redirectUri = 'http://localhost:3000/callback';
-  res.redirect(
-    `${authorizationEndpoint}?response_type=${responseType}&scope=${scope}&client_id=${clientID}&redirect_uri=${redirectUri}`
+  const responseMode = 'form_post';
+  const nonce = crypto.randomBytes(16).toString('hex');
+
+  let options = {
+    maxAge: 1000 * 60 * 15,
+    httpOnly: true, // The cookie only accessible by the web server
+    signed: true // Indicates if the cookie should be signed
+  };
+
+  // Set cookie
+  res
+    .cookie(nonceCookieName, nonce, options)
+    .redirect(
+      authorizationEndpoint +
+      '?response_mode=' + responseMode +
+      '&response_type=' + responseType +
+      '&scope=' + scope +
+      '&client_id=' + clientID +
+      '&redirect_uri='+ redirectUri +
+      '&nonce='+ nonce
   );
 });
 
-app.get('/callback', async (req, res) => {
-  const {code} = req.query;
-  const tokenEndpoint = 'https://oidc-handbook.auth0.com/oauth/token';
-
-  const tokenExchangeOptions = {
-    method: 'POST',
-    uri: tokenEndpoint,
-    form: {
-      grant_type: 'authorization_code',
-      code: code,
-      client_id: 'cSZ566Xw5yOZYs0bcebqKnXwKnfFHtVS',
-      client_secret: 'XkJuIyK8GYZT9NTy5nOEPsEsaA-Xxs3V2C8TM4rJFc72haPmq_cwDDZXe5brmlKS',
-      redirect_uri: 'http://localhost:3000'
-    },
-  };
-
-  try {
-    const response = await request(tokenExchangeOptions);
-    const responseObject = JSON.parse(response);
-    res.send(responseObject);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
-  }
+app.post('/callback', async (req, res) => {
+  const nonceCookie = req.signedCookies[nonceCookieName];
+  const {id_token} = req.body;
+  res.send({
+    nonceCookie,
+    id_token
+  });
 });
 
 app.listen(3000, () => {
