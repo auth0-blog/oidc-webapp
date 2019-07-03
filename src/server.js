@@ -10,6 +10,9 @@ const request = require('request-promise');
 // loading env vars from .env file
 require('dotenv').config();
 
+const nonceCookie = 'auth0rization-nonce';
+let oidcProviderInfo;
+
 const app = express();
 
 app.use(bodyParser.urlencoded({extended: true}));
