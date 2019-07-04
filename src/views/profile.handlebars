@@ -1,7 +1,12 @@
 <h1>End-User Profile</h1>
 <img src="{{idToken.picture}}" alt="Profile picture" />
 <ul>
-    <li><strong>User Id:</strong> {{idToken.sub}}</li>
-    <li><strong>User Name:</strong> {{idToken.name}}</li>
-    <li><strong>User Email:</strong> {{idToken.email}}</li>
+    <li><strong>User Id:</strong> {{decodedIdToken.sub}}</li>
+    <li><strong>User Name:</strong> {{decodedIdToken.name}}</li>
+    <li><strong>User Email:</strong> {{decodedIdToken.email}}</li>
 </ul>
+<p>
+    You can also use a tool like
+    <a href="https://jwt.io/#debugger-io?token={{idToken}}">https://jwt.io</a>
+    to see the full content of the id token.
+</p>

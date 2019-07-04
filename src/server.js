@@ -32,9 +32,10 @@ app.get('/', (req, res) => {
 });
 
 app.get('/profile', (req, res) => {
-  const {idToken} = req.session;
+  const {idToken, decodedIdToken} = req.session;
   res.render('profile', {
     idToken,
+    decodedIdToken,
   });
 });
 
