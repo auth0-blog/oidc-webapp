@@ -17,8 +17,9 @@
     "express-handlebars": "^3.1.0",
     "express-session": "^1.16.2",
     "husky": "^2.5.0",
-    "jsonwebtoken": "^8.5.1",
     "lint-staged": "^8.2.1",
+    "passport": "^0.4.0",
+    "passport-auth0": "^1.1.0",
     "prettier": "^1.18.2",
     "request": "^2.88.0",
     "request-promise": "^4.2.4"
