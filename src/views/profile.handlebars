@@ -1,5 +1,5 @@
 <h1>End-User Profile</h1>
-<img src="{{idToken.picture}}" alt="Profile picture" />
+<img src="{{decodedIdToken.picture}}" style="max-width: 100px; border-radius: 50%;" alt="Profile picture" />
 <ul>
     <li><strong>User Id:</strong> {{decodedIdToken.sub}}</li>
     <li><strong>User Name:</strong> {{decodedIdToken.name}}</li>
