@@ -12,9 +12,6 @@ const session = require('express-session');
 // loading env vars from .env file
 require('dotenv').config();
 
-const nonceCookie = 'auth0rization-nonce';
-let oidcProviderInfo;
-
 const app = express();
 
 // Configure Passport to use Auth0
