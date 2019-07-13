@@ -5,6 +5,7 @@ const express = require('express');
 const handlebars = require('express-handlebars');
 const path = require('path');
 const jwt = require('jsonwebtoken');
+const jwksClient = require('jwks-rsa');
 const request = require('request-promise');
 const session = require('express-session');
 
