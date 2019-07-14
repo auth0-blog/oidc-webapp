@@ -5,6 +5,7 @@ const express = require('express');
 const handlebars = require('express-handlebars');
 const path = require('path');
 const jwt = require('jsonwebtoken');
+const jwksClient = require('jwks-rsa');
 const request = require('request-promise');
 const session = require('express-session');
 
@@ -16,13 +17,15 @@ let oidcProviderInfo;
 
 const app = express();
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser(crypto.randomBytes(16).toString('hex')));
-app.use(session({
-  secret: crypto.randomBytes(32).toString('hex'),
-  resave: false,
-  saveUninitialized: false,
-}));
+app.use(
+  session({
+    secret: crypto.randomBytes(32).toString('hex'),
+    resave: false,
+    saveUninitialized: false
+  })
+);
 app.engine('handlebars', handlebars());
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
@@ -32,10 +35,10 @@ app.get('/', (req, res) => {
 });
 
 app.get('/profile', (req, res) => {
-  const {idToken, decodedIdToken} = req.session;
+  const { idToken, decodedIdToken } = req.session;
   res.render('profile', {
     idToken,
-    decodedIdToken,
+    decodedIdToken
   });
 });
 
