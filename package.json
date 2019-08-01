@@ -6,7 +6,13 @@
   "scripts": {
     "start": "node src/server.js"
   },
-  "keywords": [],
+  "keywords": [
+    "OpenID Connect",
+    "The OpenID Connect Handbook",
+    "OAuth 2.0",
+    "Web Application",
+    "Regular Web Application"
+  ],
   "author": "Bruno Krebs <krebs.bruno@gmail.com>",
   "license": "MIT",
   "dependencies": {
