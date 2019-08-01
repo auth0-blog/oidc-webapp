@@ -46,7 +46,7 @@ app.get('/login', (req, res) => {
   const authorizationEndpoint = oidcProviderInfo['authorization_endpoint'];
   const responseType = 'code';
   const audience = process.env.API_IDENTIFIER;
-  const scope = 'openid profile email read:to-dos offline_access';
+  const scope = 'openid profile email read:to-dos';
   const clientID = process.env.CLIENT_ID;
   const redirectUri = 'http://localhost:3000/callback';
   const responseMode = 'query';
@@ -92,7 +92,6 @@ app.get('/callback', async (req, res) => {
 
   const tokens = JSON.parse(codeExchangeResponse);
   req.session.accessToken = tokens.access_token;
-  req.session.refreshToken = tokens.refresh_token;
 
   // take nonce and remove it from cookie
   const nonce = req.signedCookies[nonceCookie];
