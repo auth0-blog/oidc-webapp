@@ -50,6 +50,14 @@ app.post('/callback', async (req, res) => {
   res.status(501).send();
 });
 
+app.get('/to-dos', async (req, res) => {
+  res.status(501).send();
+});
+
+app.get('/remove-to-do/:id', async (req, res) => {
+  res.status(501).send();
+});
+
 app.listen(3000, () => {
   console.log(`Server running on http://localhost:3000`);
 });
