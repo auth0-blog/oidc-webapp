@@ -119,6 +119,14 @@ app.post('/callback', async (req, res) => {
   });
 });
 
+app.get('/to-dos', async (req, res) => {
+  res.status(501).send();
+});
+
+app.get('/remove-to-do/:id', async (req, res) => {
+  res.status(501).send();
+});
+
 const { OIDC_PROVIDER } = process.env;
 const discEnd = `https://${OIDC_PROVIDER}/.well-known/openid-configuration`;
 
