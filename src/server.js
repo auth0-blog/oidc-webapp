@@ -51,12 +51,13 @@ app.get('/profile', (req, res) => {
 app.get('/login', (req, res) => {
   // define constants for the authorization request
   const authorizationEndpoint = oidcProviderInfo['authorization_endpoint'];
-  const responseType = 'id_token';
-  const scope = 'openid profile email';
+  const responseType = 'code';
+  const scope = 'openid profile email read:to-dos';
   const clientID = process.env.CLIENT_ID;
   const redirectUri = 'http://localhost:3000/callback';
-  const responseMode = 'form_post';
+  const responseMode = 'query';
   const nonce = crypto.randomBytes(16).toString('hex');
+  const audience = process.env.API_IDENTIFIER;
   // define a signed cookie containing the nonce value
   const options = {
   maxAge: 1000 * 60 * 15,
@@ -73,10 +74,35 @@ app.get('/login', (req, res) => {
   '&scope=' + scope +
   '&client_id=' + clientID +
   '&redirect_uri='+ redirectUri +
-  '&nonce='+ nonce
+  '&nonce='+ nonce +
+  '&audience=' + audience
   );
 });
 
+function validateIDToken(idToken, nonce) {
+  const decodedToken = jwt.decode(idToken);
+
+  //fetch token details
+  const {
+    nonce: decodedNonce,
+    aud: audience,
+    exp: expirationDate,
+    iss: issuer
+  } = decodedToken;
+  const currentTime = Math.floor(Date.now()/1000);
+  const expectedAudience = process.env.CLIENT_ID;
+
+  //validate ID Tokens
+  if (
+    audience !== expectedAudience ||
+    decodedNonce !== nonce ||
+    expirationDate < currentTime ||
+    issuer !== oidcProviderInfo['issuer']
+  )
+  throw Error();
+  // return the decoded token
+  return decodedToken;
+}
 app.post('/callback', async (req, res) => {
   // take nonce from cookie
   const nonce = req.signedCookies[nonceCookie];
