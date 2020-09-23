@@ -51,13 +51,13 @@ app.get('/profile', (req, res) => {
 app.get('/login', (req, res) => {
   // define constants for the authorization request
   const authorizationEndpoint = oidcProviderInfo['authorization_endpoint'];
-  const responseType = 'code';
-  const scope = 'openid profile email read:to-dos';
+  const responseType = 'token id_token';
+  const scope = 'openid profile email';
   const clientID = process.env.CLIENT_ID;
   const redirectUri = 'http://localhost:3000/callback';
-  const responseMode = 'query';
+  //const responseMode = 'form_post';
   const nonce = crypto.randomBytes(16).toString('hex');
-  const audience = process.env.API_IDENTIFIER;
+  //const audience = process.env.API_IDENTIFIER;
   // define a signed cookie containing the nonce value
   const options = {
   maxAge: 1000 * 60 * 15,
@@ -69,13 +69,14 @@ app.get('/login', (req, res) => {
   .cookie(nonceCookie, nonce, options)
   .redirect(
   authorizationEndpoint +
-  '?response_mode=' + responseMode +
-  '&response_type=' + responseType +
+  //'?response_mode=' + responseMode +
+  //'&response_type=' + responseType +
+  '?response_type=' + responseType +
   '&scope=' + scope +
   '&client_id=' + clientID +
   '&redirect_uri='+ redirectUri +
-  '&nonce='+ nonce +
-  '&audience=' + audience
+  '&nonce='+ nonce 
+  //'&audience=' + audience
   );
 });
 
@@ -111,7 +112,7 @@ app.get('/callback', async (req, res) => {
     client_id: process.env.CLIENT_ID,
     client_secret: process.env.CLIENT_SECRET,
     code: code,
-    rediret_uri: 'http://localhost:3000/callback'
+    redirect_uri: 'http://localhost:3000/callback'
   };
   
   const codeExchangeResponse = await request.post(
@@ -162,6 +163,7 @@ const {OIDC_PROVIDER} = process.env;
 console.log(OIDC_PROVIDER)
 console.log('https://' + process.env.OIDC_PROVIDER + '/oauth/token')
 const discEnd = 'https://' + OIDC_PROVIDER + '/.well-known/openid-configuration';
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 request(discEnd).then((res) => {
     oidcProviderInfo = JSON.parse(res);
     app.listen(3000, () => {
